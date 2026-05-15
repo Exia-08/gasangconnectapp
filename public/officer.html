@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#B91C1C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Barangay Gasang - Officer Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #B91C1C;
+      --primary-light: #DC2626;
+      --secondary: #166534;
+      --secondary-light: #16A34A;
+      --accent: #1D4ED8;
+      --accent-light: #3B82F6;
+      --background: #F9FAFB;
+      --surface: #FFFFFF;
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --border: #E5E7EB;
+      --success: #16A34A;
+      --warning: #F59E0B;
+      --danger: #DC2626;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--background);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--background);
+      position: relative;
+      padding-bottom: 80px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid white;
+      object-fit: cover;
+    }
+
+    .header-text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .header-text p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .screen {
+      display: none;
+      padding: 16px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .welcome-card {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .welcome-card h2 {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .welcome-card p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-number.pending { color: var(--warning); }
+    .stat-number.resolved { color: var(--success); }
+    .stat-number.citizens { color: var(--accent); }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .view-all {
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .action-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 20px 16px;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .action-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .action-card:active {
+      transform: scale(0.98);
+    }
+
+    .action-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+    }
+
+    .action-icon.concerns { background: #FEE2E2; }
+    .action-icon.announce { background: #DBEAFE; }
+    .action-icon.residents { background: #DCFCE7; }
+    .action-icon.emergency { background: #FEF3C7; }
+
+    .action-card span {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: color 0.2s ease;
+      font-family: inherit;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+    }
+
+    .nav-item svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .nav-item span {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .concern-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .concern-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .concern-category {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .concern-category.infrastructure { background: #FEE2E2; color: var(--danger); }
+    .concern-category.peace { background: #DBEAFE; color: var(--accent); }
+    .concern-category.health { background: #DCFCE7; color: var(--secondary); }
+    .concern-category.environment { background: #F3E8FF; color: #7C3AED; }
+    .concern-category.other { background: #F3F4F6; color: var(--text-secondary); }
+
+    .concern-status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .concern-status.pending { background: #FEF3C7; color: #D97706; }
+    .concern-status.in-progress { background: #DBEAFE; color: var(--accent); }
+    .concern-status.resolved { background: #DCFCE7; color: var(--secondary); }
+
+    .concern-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .concern-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .concern-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .concern-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .concern-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .concern-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .concern-btn.call {
+      background: var(--secondary);
+      color: white;
+      border: none;
+    }
+
+    .concern-btn.call:hover {
+      background: var(--secondary-light);
+    }
+
+    .concern-btn.update {
+      background: var(--surface);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    .concern-btn.update:hover {
+      background: #EFF6FF;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: inherit;
+      background: var(--surface);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .submit-btn:hover {
+      background: var(--primary-light);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.98);
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 8px 0;
+      margin-bottom: 16px;
+      font-family: inherit;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    .success-message {
+      background: #DCFCE7;
+      border: 1px solid var(--success);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .success-message svg {
+      color: var(--success);
+      margin-bottom: 8px;
+    }
+
+    .success-message h3 {
+      color: var(--secondary);
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .success-message p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .profile-section {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      color: white;
+      font-size: 32px;
+      font-weight: 600;
+    }
+
+    .profile-section h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .profile-section p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .officer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      background: #FEE2E2;
+      color: var(--primary);
+      margin-top: 8px;
+    }
+
+    .info-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .info-card p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 2px;
+    }
+
+    .info-card h4 {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 20px;
+      font-family: inherit;
+    }
+
+    .logout-btn:hover {
+      background: #FEE2E2;
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .filter-tabs {
+      display: flex;
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .filter-tab {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .announcement-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .announcement-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .announcement-badge.important { background: #FEE2E2; color: var(--danger); }
+    .announcement-badge.general { background: #DBEAFE; color: var(--accent); }
+    .announcement-badge.event { background: #DCFCE7; color: var(--secondary); }
+
+    .announcement-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .announcement-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .announcement-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .add-btn {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.4);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      z-index: 50;
+    }
+
+    .add-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(185, 28, 28, 0.5);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-content {
+      background: var(--surface);
+      width: 100%;
+      max-width: 430px;
+      border-radius: 24px 24px 0 0;
+      padding: 24px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--background);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .status-select-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .status-option {
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .status-option:hover {
+      border-color: var(--primary);
+    }
+
+    .status-option.selected {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .recent-concerns {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/451121683_122094558728423832_740798893612745520_n-gPnVKt0z1EQjuNPod4NvWOMbTf7QtN.jpg" alt="Barangay Gasang Logo" class="header-logo">
+        <div class="header-text">
+          <h1>Barangay Gasang</h1>
+          <p>Officer Dashboard</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Screen -->
+    <div class="screen active" id="dashboard-screen">
+      <div class="welcome-card">
+        <h2>Welcome, Kapitan Juan!</h2>
+        <p>Here is your barangay overview for today.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">12</div>
+          <div class="stat-label">Total Reports</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number pending">5</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number resolved">7</div>
+          <div class="stat-label">Resolved</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number citizens">1,234</div>
+          <div class="stat-label">Registered Citizens</div>
+        </div>
+      </div>
+
+      <h3 class="section-title">Quick Actions</h3>
+      <div class="quick-actions">
+        <button class="action-card" onclick="showScreen('concerns-screen')">
+          <div class="action-icon concerns">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          </div>
+          <span>View Concerns</span>
+        </button>
+
+        <button class="action-card" onclick="showScreen('announcements-screen')">
+          <div class="action-icon announce">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>
+          </div>
+          <span>Announcements</span>
+        </button>
+
+        <button class="action-card" onclick="showScreen('residents-screen')">
+          <div class="action-icon residents">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <span>Residents</span>
+        </button>
+
+        <button class="action-card" onclick="showScreen('emergency-screen')">
+          <div class="action-icon emergency">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          </div>
+          <span>Emergency</span>
+        </button>
+      </div>
+
+      <div class="recent-concerns">
+        <h3 class="section-title">
+          Recent Concerns
+          <span class="view-all" onclick="showScreen('concerns-screen')">View All</span>
+        </h3>
+
+        <div class="concern-card">
+          <div class="concern-header">
+            <span class="concern-category infrastructure">Infrastructure</span>
+            <span class="concern-status pending">Pending</span>
+          </div>
+          <h3>Broken Street Light</h3>
+          <p>Street light near Purok 3 has been broken for 2 weeks now.</p>
+          <div class="concern-meta">
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              Maria Santos
+            </span>
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              May 14, 2026
+            </span>
+          </div>
+        </div>
+
+        <div class="concern-card">
+          <div class="concern-header">
+            <span class="concern-category peace">Peace & Order</span>
+            <span class="concern-status in-progress">In Progress</span>
+          </div>
+          <h3>Noise Complaint</h3>
+          <p>Loud karaoke from neighbor every night until 2 AM.</p>
+          <div class="concern-meta">
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              Pedro Reyes
+            </span>
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              May 13, 2026
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concerns Screen -->
+    <div class="screen" id="concerns-screen">
+      <button class="back-btn" onclick="showScreen('dashboard-screen')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+
+      <h2 class="page-title">Citizen Concerns</h2>
+
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterConcerns('all', this)">All</button>
+        <button class="filter-tab" onclick="filterConcerns('pending', this)">Pending</button>
+        <button class="filter-tab" onclick="filterConcerns('resolved', this)">Resolved</button>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-header">
+          <span class="concern-category infrastructure">Infrastructure</span>
+          <span class="concern-status pending">Pending</span>
+        </div>
+        <h3>Broken Street Light</h3>
+        <p>Street light near Purok 3 has been broken for 2 weeks now. It is very dark at night and we are worried about safety.</p>
+        <div class="concern-meta">
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Maria Santos
+          </span>
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            0917 111 2222
+          </span>
+        </div>
+        <div class="concern-actions">
+          <a href="tel:09171112222" class="concern-btn call">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            Call
+          </a>
+          <button class="concern-btn update" onclick="showUpdateModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            Update
+          </button>
+        </div>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-header">
+          <span class="concern-category peace">Peace & Order</span>
+          <span class="concern-status in-progress">In Progress</span>
+        </div>
+        <h3>Noise Complaint</h3>
+        <p>Loud karaoke from neighbor every night until 2 AM. Cannot sleep and children have school the next day.</p>
+        <div class="concern-meta">
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Pedro Reyes
+          </span>
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            0918 333 4444
+          </span>
+        </div>
+        <div class="concern-actions">
+          <a href="tel:09183334444" class="concern-btn call">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            Call
+          </a>
+          <button class="concern-btn update" onclick="showUpdateModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            Update
+          </button>
+        </div>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-header">
+          <span class="concern-category health">Health</span>
+          <span class="concern-status resolved">Resolved</span>
+        </div>
+        <h3>Stagnant Water</h3>
+        <p>Stagnant water near the basketball court is breeding mosquitoes. Dengue cases are increasing.</p>
+        <div class="concern-meta">
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Ana Garcia
+          </span>
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            0919 555 6666
+          </span>
+        </div>
+        <div class="concern-actions">
+          <a href="tel:09195556666" class="concern-btn call">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            Call
+          </a>
+          <button class="concern-btn update" onclick="showUpdateModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            Update
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Announcements Screen -->
+    <div class="screen" id="announcements-screen">
+      <button class="back-btn" onclick="showScreen('dashboard-screen')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+
+      <h2 class="page-title">Announcements</h2>
+
+      <div class="success-message" id="announce-success">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <h3>Announcement Posted!</h3>
+        <p>Your announcement has been published to all citizens.</p>
+      </div>
+
+      <div class="announcement-card">
+        <span class="announcement-badge important">Important</span>
+        <h3>Water Service Interruption</h3>
+        <p>There will be a scheduled water service interruption on May 20, 2026 from 8:00 AM to 5:00 PM.</p>
+        <div class="announcement-meta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          May 15, 2026
+        </div>
+      </div>
+
+      <div class="announcement-card">
+        <span class="announcement-badge event">Event</span>
+        <h3>Barangay Assembly Meeting</h3>
+        <p>Quarterly Barangay Assembly Meeting on May 25, 2026 at 2:00 PM at the Barangay Hall.</p>
+        <div class="announcement-meta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          May 14, 2026
+        </div>
+      </div>
+
+      <div class="announcement-card">
+        <span class="announcement-badge general">General</span>
+        <h3>Free Medical Check-up</h3>
+        <p>The Rural Health Unit will conduct a free medical check-up on May 22, 2026.</p>
+        <div class="announcement-meta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          May 12, 2026
+        </div>
+      </div>
+
+      <button class="add-btn" onclick="showAnnounceModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      </button>
+    </div>
+
+    <!-- Residents Screen -->
+    <div class="screen" id="residents-screen">
+      <button class="back-btn" onclick="showScreen('dashboard-screen')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+
+      <h2 class="page-title">Registered Residents</h2>
+
+      <div class="stats-grid" style="margin-bottom: 20px;">
+        <div class="stat-card">
+          <div class="stat-number citizens">1,234</div>
+          <div class="stat-label">Total Residents</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" style="color: var(--secondary);">312</div>
+          <div class="stat-label">Households</div>
+        </div>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-header">
+          <h3 style="margin: 0;">Juan Dela Cruz</h3>
+        </div>
+        <div class="concern-meta" style="margin-top: 8px;">
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Purok 1
+          </span>
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            0917 123 4567
+          </span>
+        </div>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-header">
+          <h3 style="margin: 0;">Maria Santos</h3>
+        </div>
+        <div class="concern-meta" style="margin-top: 8px;">
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Purok 2
+          </span>
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            0918 234 5678
+          </span>
+        </div>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-header">
+          <h3 style="margin: 0;">Pedro Reyes</h3>
+        </div>
+        <div class="concern-meta" style="margin-top: 8px;">
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Purok 3
+          </span>
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            0919 345 6789
+          </span>
+        </div>
+      </div>
+
+      <div class="concern-card">
+        <div class="concern-header">
+          <h3 style="margin: 0;">Ana Garcia</h3>
+        </div>
+        <div class="concern-meta" style="margin-top: 8px;">
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Purok 1
+          </span>
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            0920 456 7890
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency Screen -->
+    <div class="screen" id="emergency-screen">
+      <button class="back-btn" onclick="showScreen('dashboard-screen')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+
+      <h2 class="page-title">Emergency Management</h2>
+
+      <div class="welcome-card" style="background: linear-gradient(135deg, #DC2626 0%, #EF4444 100%);">
+        <h2>Emergency Alert System</h2>
+        <p>Send emergency notifications to all citizens</p>
+      </div>
+
+      <form onsubmit="sendEmergencyAlert(event)">
+        <div class="form-group">
+          <label class="form-label">Emergency Type</label>
+          <select class="form-select" required>
+            <option value="">Select type</option>
+            <option value="fire">Fire</option>
+            <option value="flood">Flood</option>
+            <option value="earthquake">Earthquake</option>
+            <option value="typhoon">Typhoon</option>
+            <option value="other">Other Emergency</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Alert Message</label>
+          <textarea class="form-textarea" placeholder="Enter emergency alert message..." required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" style="background: #DC2626;">
+          Send Emergency Alert
+        </button>
+      </form>
+    </div>
+
+    <!-- Profile Screen -->
+    <div class="screen" id="profile-screen">
+      <h2 class="page-title">My Profile</h2>
+
+      <div class="profile-section">
+        <div class="profile-avatar">JD</div>
+        <h3>Hon. Juan Dela Cruz</h3>
+        <p>Barangay Captain</p>
+        <span class="officer-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Verified Officer
+        </span>
+      </div>
+
+      <div class="info-card">
+        <p>Officer ID</p>
+        <h4>BGY-CAP-001</h4>
+      </div>
+
+      <div class="info-card">
+        <p>Mobile Number</p>
+        <h4>0917 123 4567</h4>
+      </div>
+
+      <div class="info-card">
+        <p>Email Address</p>
+        <h4>captain@gasang.gov.ph</h4>
+      </div>
+
+      <div class="info-card">
+        <p>Term</p>
+        <h4>2023 - 2026</h4>
+      </div>
+
+      <button class="logout-btn" onclick="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Logout
+      </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="showScreen('dashboard-screen')" id="nav-dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('concerns-screen')" id="nav-concerns">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        <span>Concerns</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('announcements-screen')" id="nav-announce">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>
+        <span>Announce</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('profile-screen')" id="nav-profile">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+    <!-- Update Status Modal -->
+    <div class="modal-overlay" id="update-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Update Status</h2>
+          <button class="modal-close" onclick="closeModal('update-modal')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <div class="status-select-group">
+            <button type="button" class="status-option" onclick="selectStatus(this, 'pending')">Pending</button>
+            <button type="button" class="status-option" onclick="selectStatus(this, 'in-progress')">In Progress</button>
+            <button type="button" class="status-option selected" onclick="selectStatus(this, 'resolved')">Resolved</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Add Note (Optional)</label>
+          <textarea class="form-textarea" placeholder="Add a note about this update..."></textarea>
+        </div>
+
+        <button class="submit-btn" onclick="updateStatus()">Update Status</button>
+      </div>
+    </div>
+
+    <!-- New Announcement Modal -->
+    <div class="modal-overlay" id="announce-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>New Announcement</h2>
+          <button class="modal-close" onclick="closeModal('announce-modal')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <form onsubmit="postAnnouncement(event)">
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="form-select" required>
+              <option value="">Select type</option>
+              <option value="important">Important</option>
+              <option value="general">General</option>
+              <option value="event">Event</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text" class="form-input" placeholder="Announcement title" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea class="form-textarea" placeholder="Enter announcement details..." required></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">Post Announcement</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      document.getElementById(screenId).classList.add('active');
+
+      document.querySelectorAll('.nav-item').forEach(nav => {
+        nav.classList.remove('active');
+      });
+
+      const navMap = {
+        'dashboard-screen': 'nav-dashboard',
+        'concerns-screen': 'nav-concerns',
+        'announcements-screen': 'nav-announce',
+        'profile-screen': 'nav-profile'
+      };
+
+      if (navMap[screenId]) {
+        document.getElementById(navMap[screenId]).classList.add('active');
+      }
+    }
+
+    function filterConcerns(filter, btn) {
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      btn.classList.add('active');
+      // In a real app, this would filter the concerns list
+    }
+
+    function showUpdateModal() {
+      document.getElementById('update-modal').classList.add('show');
+    }
+
+    function showAnnounceModal() {
+      document.getElementById('announce-modal').classList.add('show');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('show');
+    }
+
+    function selectStatus(btn, status) {
+      document.querySelectorAll('.status-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      btn.classList.add('selected');
+    }
+
+    function updateStatus() {
+      closeModal('update-modal');
+      alert('Status updated successfully!');
+    }
+
+    function postAnnouncement(e) {
+      e.preventDefault();
+      closeModal('announce-modal');
+      document.getElementById('announce-success').classList.add('show');
+      setTimeout(() => {
+        document.getElementById('announce-success').classList.remove('show');
+      }, 3000);
+    }
+
+    function sendEmergencyAlert(e) {
+      e.preventDefault();
+      alert('Emergency alert sent to all citizens!');
+    }
+
+    function logout() {
+      window.location.href = 'index.html';
+    }
+
+    // Close modal when clicking outside
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('show');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

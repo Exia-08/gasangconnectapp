@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#B91C1C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Barangay Gasang - Citizen App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #B91C1C;
+      --primary-light: #DC2626;
+      --secondary: #166534;
+      --secondary-light: #16A34A;
+      --accent: #1D4ED8;
+      --accent-light: #3B82F6;
+      --background: #F9FAFB;
+      --surface: #FFFFFF;
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --border: #E5E7EB;
+      --success: #16A34A;
+      --warning: #F59E0B;
+      --danger: #DC2626;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--background);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--background);
+      position: relative;
+      padding-bottom: 80px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+      color: white;
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid white;
+      object-fit: cover;
+    }
+
+    .header-text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .header-text p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .header-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    .header-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: white;
+    }
+
+    .screen {
+      display: none;
+      padding: 16px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .welcome-card {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .welcome-card h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .welcome-card p {
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .action-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 20px 16px;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .action-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .action-card:active {
+      transform: scale(0.98);
+    }
+
+    .action-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      font-size: 24px;
+    }
+
+    .action-icon.report { background: #FEE2E2; }
+    .action-icon.contact { background: #DCFCE7; }
+    .action-icon.announce { background: #DBEAFE; }
+    .action-icon.emergency { background: #FEF3C7; }
+
+    .action-card span {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .emergency-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--danger) 0%, #EF4444 100%);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 18px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .emergency-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+    }
+
+    .emergency-btn:active {
+      transform: scale(0.98);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: color 0.2s ease;
+      font-family: inherit;
+    }
+
+    .nav-item.active {
+      color: var(--secondary);
+    }
+
+    .nav-item svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .nav-item span {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: inherit;
+      background: var(--surface);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.1);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--secondary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .submit-btn:hover {
+      background: var(--secondary-light);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.98);
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 8px 0;
+      margin-bottom: 16px;
+      font-family: inherit;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    .officer-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .officer-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .officer-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .officer-info h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .officer-info p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .officer-info .phone {
+      font-size: 14px;
+      color: var(--secondary);
+      font-weight: 500;
+    }
+
+    .call-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--secondary);
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .call-btn:hover {
+      background: var(--secondary-light);
+      transform: scale(1.05);
+    }
+
+    .announcement-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .announcement-card.important {
+      border-left: 4px solid var(--danger);
+    }
+
+    .announcement-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .announcement-badge.important {
+      background: #FEE2E2;
+      color: var(--danger);
+    }
+
+    .announcement-badge.general {
+      background: #DBEAFE;
+      color: var(--accent);
+    }
+
+    .announcement-badge.event {
+      background: #DCFCE7;
+      color: var(--secondary);
+    }
+
+    .announcement-card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .announcement-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .announcement-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hotline-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .hotline-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .hotline-card:active {
+      transform: scale(0.98);
+    }
+
+    .hotline-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .hotline-icon.barangay { background: #FEE2E2; color: var(--danger); }
+    .hotline-icon.police { background: #DBEAFE; color: var(--accent); }
+    .hotline-icon.fire { background: #FEF3C7; color: #D97706; }
+    .hotline-icon.medical { background: #DCFCE7; color: var(--secondary); }
+    .hotline-icon.disaster { background: #F3E8FF; color: #7C3AED; }
+
+    .hotline-info {
+      flex: 1;
+    }
+
+    .hotline-info h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .hotline-info p {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--danger);
+    }
+
+    .success-message {
+      background: #DCFCE7;
+      border: 1px solid var(--success);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .success-message svg {
+      color: var(--success);
+      margin-bottom: 8px;
+    }
+
+    .success-message h3 {
+      color: var(--secondary);
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .success-message p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 20px;
+      font-family: inherit;
+    }
+
+    .logout-btn:hover {
+      background: #FEE2E2;
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .profile-section {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      color: white;
+      font-size: 32px;
+      font-weight: 600;
+    }
+
+    .profile-section h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .profile-section p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/451121683_122094558728423832_740798893612745520_n-gPnVKt0z1EQjuNPod4NvWOMbTf7QtN.jpg" alt="Barangay Gasang Logo" class="header-logo">
+        <div class="header-text">
+          <h1>Barangay Gasang</h1>
+          <p>Citizen Portal</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Home Screen -->
+    <div class="screen active" id="home-screen">
+      <div class="welcome-card">
+        <h2>Magandang Araw!</h2>
+        <p>Welcome to Barangay Gasang Connect. How can we help you today?</p>
+      </div>
+
+      <h3 class="section-title">Quick Actions</h3>
+      <div class="quick-actions">
+        <button class="action-card" onclick="showScreen('report-screen')">
+          <div class="action-icon report">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          </div>
+          <span>Report Concern</span>
+        </button>
+
+        <button class="action-card" onclick="showScreen('contact-screen')">
+          <div class="action-icon contact">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <span>Contact Officers</span>
+        </button>
+
+        <button class="action-card" onclick="showScreen('announce-screen')">
+          <div class="action-icon announce">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          </div>
+          <span>Announcements</span>
+        </button>
+
+        <button class="action-card" onclick="showScreen('emergency-screen')">
+          <div class="action-icon emergency">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          </div>
+          <span>Emergency</span>
+        </button>
+      </div>
+
+      <button class="emergency-btn" onclick="showScreen('emergency-screen')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        EMERGENCY HOTLINE
+      </button>
+    </div>
+
+    <!-- Report Concern Screen -->
+    <div class="screen" id="report-screen">
+      <button class="back-btn" onclick="showScreen('home-screen')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+
+      <h2 class="page-title">Report a Concern</h2>
+
+      <div class="success-message" id="report-success">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <h3>Report Submitted!</h3>
+        <p>Your concern has been sent to the barangay office. We will contact you soon.</p>
+      </div>
+
+      <form id="report-form" onsubmit="submitReport(event)">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" required>
+            <option value="">Select a category</option>
+            <option value="infrastructure">Infrastructure (Roads, Lights, etc.)</option>
+            <option value="peace">Peace and Order</option>
+            <option value="health">Health and Sanitation</option>
+            <option value="environment">Environment</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" class="form-input" placeholder="Juan Dela Cruz" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Contact Number</label>
+          <input type="tel" class="form-input" placeholder="09XX XXX XXXX" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Location/Address</label>
+          <input type="text" class="form-input" placeholder="Purok/Sitio, Barangay Gasang" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Describe your concern</label>
+          <textarea class="form-textarea" placeholder="Please provide details about your concern..." required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit Report</button>
+      </form>
+    </div>
+
+    <!-- Contact Officers Screen -->
+    <div class="screen" id="contact-screen">
+      <button class="back-btn" onclick="showScreen('home-screen')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+
+      <h2 class="page-title">Barangay Officers</h2>
+
+      <div class="officer-card">
+        <div class="officer-avatar">JD</div>
+        <div class="officer-info">
+          <h3>Hon. Juan Dela Cruz</h3>
+          <p>Barangay Captain</p>
+          <span class="phone">0917 123 4567</span>
+        </div>
+        <a href="tel:09171234567" class="call-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+        </a>
+      </div>
+
+      <div class="officer-card">
+        <div class="officer-avatar">MS</div>
+        <div class="officer-info">
+          <h3>Maria Santos</h3>
+          <p>Barangay Secretary</p>
+          <span class="phone">0918 234 5678</span>
+        </div>
+        <a href="tel:09182345678" class="call-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+        </a>
+      </div>
+
+      <div class="officer-card">
+        <div class="officer-avatar">PR</div>
+        <div class="officer-info">
+          <h3>Pedro Reyes</h3>
+          <p>Barangay Treasurer</p>
+          <span class="phone">0919 345 6789</span>
+        </div>
+        <a href="tel:09193456789" class="call-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+        </a>
+      </div>
+
+      <div class="officer-card">
+        <div class="officer-avatar">AG</div>
+        <div class="officer-info">
+          <h3>Ana Garcia</h3>
+          <p>SK Chairperson</p>
+          <span class="phone">0920 456 7890</span>
+        </div>
+        <a href="tel:09204567890" class="call-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+        </a>
+      </div>
+
+      <div class="officer-card">
+        <div class="officer-avatar">RL</div>
+        <div class="officer-info">
+          <h3>Roberto Lim</h3>
+          <p>Kagawad - Peace and Order</p>
+          <span class="phone">0921 567 8901</span>
+        </div>
+        <a href="tel:09215678901" class="call-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Announcements Screen -->
+    <div class="screen" id="announce-screen">
+      <button class="back-btn" onclick="showScreen('home-screen')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+
+      <h2 class="page-title">Announcements</h2>
+
+      <div class="announcement-card important">
+        <span class="announcement-badge important">Important</span>
+        <h3>Water Service Interruption</h3>
+        <p>There will be a scheduled water service interruption on May 20, 2026 from 8:00 AM to 5:00 PM due to maintenance work. Please store enough water for your needs.</p>
+        <div class="announcement-meta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          May 15, 2026
+        </div>
+      </div>
+
+      <div class="announcement-card">
+        <span class="announcement-badge event">Event</span>
+        <h3>Barangay Assembly Meeting</h3>
+        <p>All residents are invited to attend the Quarterly Barangay Assembly Meeting on May 25, 2026 at 2:00 PM at the Barangay Hall. Your participation is highly encouraged.</p>
+        <div class="announcement-meta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          May 14, 2026
+        </div>
+      </div>
+
+      <div class="announcement-card">
+        <span class="announcement-badge general">General</span>
+        <h3>Free Medical Check-up</h3>
+        <p>The Rural Health Unit will conduct a free medical check-up and consultation on May 22, 2026. Senior citizens and PWDs will be prioritized. Please bring your Barangay ID.</p>
+        <div class="announcement-meta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          May 12, 2026
+        </div>
+      </div>
+
+      <div class="announcement-card">
+        <span class="announcement-badge general">General</span>
+        <h3>Barangay Clearance Processing</h3>
+        <p>Barangay clearance processing is now available Monday to Friday, 8:00 AM to 5:00 PM. Please bring valid ID and proof of residency.</p>
+        <div class="announcement-meta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          May 10, 2026
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency Screen -->
+    <div class="screen" id="emergency-screen">
+      <button class="back-btn" onclick="showScreen('home-screen')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+
+      <h2 class="page-title">Emergency Hotlines</h2>
+
+      <a href="tel:09171234567" class="hotline-card">
+        <div class="hotline-icon barangay">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
+        <div class="hotline-info">
+          <h3>Barangay Emergency</h3>
+          <p>0917 123 4567</p>
+        </div>
+      </a>
+
+      <a href="tel:117" class="hotline-card">
+        <div class="hotline-icon police">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        <div class="hotline-info">
+          <h3>PNP Hotline</h3>
+          <p>117</p>
+        </div>
+      </a>
+
+      <a href="tel:911" class="hotline-card">
+        <div class="hotline-icon fire">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+        </div>
+        <div class="hotline-info">
+          <h3>BFP / Fire Station</h3>
+          <p>911</p>
+        </div>
+      </a>
+
+      <a href="tel:911" class="hotline-card">
+        <div class="hotline-icon medical">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+        </div>
+        <div class="hotline-info">
+          <h3>Medical Emergency</h3>
+          <p>911</p>
+        </div>
+      </a>
+
+      <a href="tel:911" class="hotline-card">
+        <div class="hotline-icon disaster">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>
+        </div>
+        <div class="hotline-info">
+          <h3>NDRRMC</h3>
+          <p>911</p>
+        </div>
+      </a>
+    </div>
+
+    <!-- Profile Screen -->
+    <div class="screen" id="profile-screen">
+      <h2 class="page-title">My Profile</h2>
+
+      <div class="profile-section">
+        <div class="profile-avatar">JD</div>
+        <h3>Juan Dela Cruz</h3>
+        <p>Citizen - Barangay Gasang</p>
+      </div>
+
+      <div class="officer-card">
+        <div class="officer-info" style="margin-left: 8px;">
+          <p style="margin-bottom: 2px;">Mobile Number</p>
+          <h3 style="font-size: 15px;">0917 123 4567</h3>
+        </div>
+      </div>
+
+      <div class="officer-card">
+        <div class="officer-info" style="margin-left: 8px;">
+          <p style="margin-bottom: 2px;">Address</p>
+          <h3 style="font-size: 15px;">Purok 1, Barangay Gasang, Mabini, Batangas</h3>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Logout
+      </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="showScreen('home-screen')" id="nav-home">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('announce-screen')" id="nav-announce">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+        <span>Updates</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('report-screen')" id="nav-report">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+        <span>Report</span>
+      </button>
+      <button class="nav-item" onclick="showScreen('profile-screen')" id="nav-profile">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+  </div>
+
+  <script>
+    function showScreen(screenId) {
+      // Hide all screens
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      
+      // Show target screen
+      document.getElementById(screenId).classList.add('active');
+
+      // Update nav
+      document.querySelectorAll('.nav-item').forEach(nav => {
+        nav.classList.remove('active');
+      });
+
+      // Map screens to nav items
+      const navMap = {
+        'home-screen': 'nav-home',
+        'announce-screen': 'nav-announce',
+        'report-screen': 'nav-report',
+        'profile-screen': 'nav-profile'
+      };
+
+      if (navMap[screenId]) {
+        document.getElementById(navMap[screenId]).classList.add('active');
+      }
+    }
+
+    function submitReport(e) {
+      e.preventDefault();
+      document.getElementById('report-success').classList.add('show');
+      document.getElementById('report-form').reset();
+      
+      setTimeout(() => {
+        document.getElementById('report-success').classList.remove('show');
+      }, 5000);
+    }
+
+    function logout() {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
